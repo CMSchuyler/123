@@ -17,39 +17,53 @@ function Ocean() {
 	const geom = useMemo(() => new THREE.PlaneGeometry(2000, 3000), []);
 	const config = useMemo(
 		() => ({
-			textureWidth: 256,  // 降低纹理分辨率
-			textureHeight: 256,  // 降低纹理分辨率
+			textureWidth: 512,
+			textureHeight: 512,
 			waterNormals,
 			sunDirection: new THREE.Vector3(),
-			sunColor: 0x001133,  // 调暗太阳光颜色
+			sunColor: 0xffffff,
 			waterColor: 0x000c06,
-			distortionScale: 1,  // 显著增加扭曲程度
-			fog: true,  // 启用雾效果
+			distortionScale: 1,        // 保持你设置的扭曲程度
+			fog: false,
 			format: gl.encoding,
-			alpha: 0.8,  // 降低透明度
-			mirror: 0.1,  // 进一步降低反射
+			alpha: 1,
+			mirror: 0.2,    // 设置镜面反射为0，禁用反射
 		}),
 		[waterNormals]
 	);
 
+	const initRef = useRef(false);
 	useFrame((state, delta) => {
-		ref.current.material.uniforms.time.value += delta * 0.05;  // 增加波动速度
+		ref.current.material.uniforms.time.value += delta * 0.05;
 		
-		// 动态调整uniforms
-		if (ref.current.material.uniforms) {
+		if (!initRef.current && ref.current) {
 			const uniforms = ref.current.material.uniforms;
-			
-			// 增加水面的模糊度
-			if (uniforms.normalSampler) {
-				uniforms.normalSampler.value = waterNormals;
-				waterNormals.minFilter = THREE.LinearFilter;
-				waterNormals.magFilter = THREE.LinearFilter;
+
+			// 在Shader中添加模糊处理
+			if (uniforms.mirrorSampler) {
+				// 完全禁用反射 - 设置反射强度为0
+				if (uniforms.reflectivity) {
+					uniforms.reflectivity.value = 0;  // 将反射率设为0，禁用反射
+					console.log('Water reflection disabled (reflectivity = 0)');
+				}
+				
+				// 禁用镜面采样器
+				if (uniforms.mirrorSampler.value) {
+					// 尝试禁用反射贴图的渲染
+					try {
+						uniforms.mirrorSampler.value.needsUpdate = false;
+					} catch (e) {
+						console.log('Could not disable mirror sampler update', e);
+					}
+				}
+				
+				// 如果有eye参数，也可以尝试禁用
+				if (uniforms.eye) {
+					uniforms.eye.value = new THREE.Vector3(0, 0, 0);
+				}
 			}
-			
-			// 调整水面的整体亮度
-			if (uniforms.waterColor) {
-				uniforms.waterColor.value.setHex(0x000c06);
-			}
+
+			initRef.current = true;
 		}
 	});
 
