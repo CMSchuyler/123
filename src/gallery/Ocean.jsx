@@ -27,7 +27,7 @@ function Ocean() {
 			fog: true,  // 启用雾效果
 			format: gl.encoding,
 			alpha: 0.8,  // 降低透明度
-			mirror: 0.1,  // 进一步降低反射
+			mirror: 0.0,  // 进一步降低反射
 		}),
 		[waterNormals]
 	);
