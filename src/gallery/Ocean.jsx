@@ -17,8 +17,8 @@ function Ocean() {
 	const geom = useMemo(() => new THREE.PlaneGeometry(2000, 3000), []);
 	const config = useMemo(
 		() => ({
-			textureWidth: 256,  // 降低纹理分辨率
-			textureHeight: 256,  // 降低纹理分辨率
+			textureWidth: 25,  // 降低纹理分辨率
+			textureHeight: 25,  // 降低纹理分辨率
 			waterNormals,
 			sunDirection: new THREE.Vector3(),
 			sunColor: 0x001133,  // 调暗太阳光颜色
