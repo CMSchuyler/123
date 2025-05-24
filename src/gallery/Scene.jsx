@@ -14,9 +14,16 @@ const Scene = () => {
 				fov: 75,
 				position: [0, 0, 0],
 				rotation: [-Math.PI * 0.5, 0, 0],
+				far: 2000, // 增加相机的远平面距离
+				near: 0.1
+			}}
+			gl={{
+				antialias: true,
+				alpha: false,
+				stencil: false,
+				depth: true
 			}}
 		>
-			{/* <OrbitControls /> */}
 			<color attach="background" args={['#191920']} />
 			<Gallery />
 			<Ocean />
