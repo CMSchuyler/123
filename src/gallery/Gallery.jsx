@@ -1,5 +1,5 @@
-import Frames from './Frames';
 import { useState, useEffect, useRef } from 'react';
+import Frames from './Frames';
 import { useFrame } from '@react-three/fiber';
 import { useProgress } from '@react-three/drei';
 import * as THREE from 'three';
@@ -282,17 +282,21 @@ const Gallery = () => {
 		initialPositionSet: false,
 		currentZ: 1150,
 		targetZ: 1150,
-		lastUpdateTime: 0,
-		velocity: 0
+		frustum: new THREE.Frustum(),
+		projScreenMatrix: new THREE.Matrix4()
 	});
-
+	
+	const logDebug = (message) => {
+		console.log(`[Debug] ${message}`);
+	};
+	
 	useEffect(() => {
 		const wheelHandler = (event) => {
 			event.preventDefault();
 			
 			if (animationRef.current.complete) {
 				const scrollDirection = Math.sign(event.deltaY);
-				const scrollAmount = 5; // 减小滚动量
+				const scrollAmount = 10;
 				
 				const newTarget = animationRef.current.targetZ - scrollDirection * scrollAmount;
 				animationRef.current.targetZ = Math.max(50, Math.min(1150, newTarget));
@@ -306,15 +310,17 @@ const Gallery = () => {
 		};
 	}, []);
 	
-	useFrame((state, delta) => {
+	useFrame((state) => {
+		const elapsedTime = state.clock.getElapsedTime();
+		
 		if (progress === 100) {
-			if (times.length === 0) setTimes([state.clock.getElapsedTime()]);
+			if (times.length === 0) setTimes([elapsedTime]);
 			const delay = 8 + times[0];
 			
-			if (state.clock.getElapsedTime() < delay) {
+			if (elapsedTime < delay) {
 				const startZ = 1000;
 				const endZ = 1150;
-				const t = state.clock.getElapsedTime() / delay;
+				const t = elapsedTime / delay;
 				
 				state.camera.position.z = startZ + t * (endZ - startZ);
 				state.camera.position.y = 7;
@@ -329,7 +335,6 @@ const Gallery = () => {
 					animationRef.current.targetZ = state.camera.position.z;
 					animationRef.current.initialPositionSet = true;
 					animationRef.current.complete = true;
-					animationRef.current.lastUpdateTime = state.clock.getElapsedTime();
 				}
 				
 				if (!animationRef.current.complete) {
@@ -338,33 +343,26 @@ const Gallery = () => {
 				
 				state.camera.position.y = 7;
 				
-				const currentTime = state.clock.getElapsedTime();
-				const deltaTime = currentTime - animationRef.current.lastUpdateTime;
-				animationRef.current.lastUpdateTime = currentTime;
-				
 				const currentZ = state.camera.position.z;
 				const distance = animationRef.current.targetZ - currentZ;
 				
-				// 使用弹簧阻尼系统来平滑移动
-				const spring = 0.3;
-				const damping = 0.8;
-				
-				// 计算加速度
-				const acceleration = spring * distance;
-				
-				// 更新速度
-				animationRef.current.velocity += acceleration;
-				animationRef.current.velocity *= damping;
-				
-				// 应用速度
-				if (Math.abs(distance) > 0.01 || Math.abs(animationRef.current.velocity) > 0.01) {
-					state.camera.position.z += animationRef.current.velocity;
-				} else {
-					state.camera.position.z = animationRef.current.targetZ;
-					animationRef.current.velocity = 0;
+				if (Math.abs(distance) > 0.1) {
+					const acceleration = 0.02;
+					const step = distance * acceleration;
+					state.camera.position.z += step;
 				}
+				
+				animationRef.current.projScreenMatrix.multiplyMatrices(
+					state.camera.projectionMatrix,
+					state.camera.matrixWorldInverse
+				);
+				animationRef.current.frustum.setFromProjectionMatrix(
+					animationRef.current.projScreenMatrix
+				);
 			}
 		}
+		
+		state.gl.setPixelRatio(Math.min(2, window.devicePixelRatio));
 	});
 
 	return (
