@@ -33,7 +33,7 @@ function Ocean() {
 	);
 
 	useFrame((state, delta) => {
-		ref.current.material.uniforms.time.value += delta * 0.15;  // 增加波动速度
+		ref.current.material.uniforms.time.value += delta * 0.1;  // 增加波动速度
 		
 		// 动态调整uniforms
 		if (ref.current.material.uniforms) {
