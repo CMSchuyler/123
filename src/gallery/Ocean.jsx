@@ -23,7 +23,7 @@ function Ocean() {
 			sunDirection: new THREE.Vector3(),
 			sunColor: 0x001133,  // 调暗太阳光颜色
 			waterColor: 0x000c06,
-			distortionScale: 3.5,  // 显著增加扭曲程度
+			distortionScale: 1,  // 显著增加扭曲程度
 			fog: true,  // 启用雾效果
 			format: gl.encoding,
 			alpha: 0.8,  // 降低透明度
@@ -33,7 +33,7 @@ function Ocean() {
 	);
 
 	useFrame((state, delta) => {
-		ref.current.material.uniforms.time.value += delta * 0.01;  // 增加波动速度
+		ref.current.material.uniforms.time.value += delta * 0.05;  // 增加波动速度
 		
 		// 动态调整uniforms
 		if (ref.current.material.uniforms) {
