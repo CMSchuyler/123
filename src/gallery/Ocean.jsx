@@ -13,49 +13,57 @@ function Ocean() {
 		'./textures/waternormals.jpeg'
 	);
 	waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping;
-	waterNormals.repeat.set(8, 8); // 增加重复次数，使水面纹理更细腻
 
-	const geom = useMemo(() => new THREE.PlaneGeometry(1500, 2500), []);
+	const geom = useMemo(() => new THREE.PlaneGeometry(2000, 3000), []);
 	const config = useMemo(
 		() => ({
-			textureWidth: 128,  // 进一步降低纹理分辨率
-			textureHeight: 128,  // 进一步降低纹理分辨率
+			textureWidth: 512,
+			textureHeight: 512,
 			waterNormals,
 			sunDirection: new THREE.Vector3(),
-			sunColor: 0x000000,  // 完全消除太阳光反射
-			waterColor: 0x001414,  // 调整水色
-			distortionScale: 0.5,  // 降低扭曲程度
-			fog: true,
+			sunColor: 0xffffff,
+			waterColor: 0x000c06,
+			distortionScale: 0.25,        // 增加波纹程度
+			fog: false,
 			format: gl.encoding,
-			alpha: 0.3,  // 显著降低不透明度
-			mirror: 0.1,  // 最小化反射
+			alpha: 1,
+			mirror: 0.2,    // 设置镜面反射为0，禁用反射
 		}),
 		[waterNormals]
 	);
 
+	const initRef = useRef(false);
 	useFrame((state, delta) => {
-		ref.current.material.uniforms.time.value += delta * 0.15;
+		ref.current.material.uniforms.time.value += delta * 0.05;
 		
-		// 动态调整材质属性
-		if (ref.current.material) {
-			const material = ref.current.material;
-			
-			// 确保材质是透明的
-			material.transparent = true;
-			material.opacity = 0.3;
-			
-			// 调整混合模式
-			material.blending = THREE.AdditiveBlending;
-			
-			// 禁用深度写入以改善透明效果
-			material.depthWrite = false;
-			
-			// 调整材质的其他属性
-			if (material.uniforms) {
-				material.uniforms.distortionScale.value = 0.5;
-				material.uniforms.size.value = 2;
-				material.uniforms.alpha.value = 0.3;
+		if (!initRef.current && ref.current) {
+			const uniforms = ref.current.material.uniforms;
+
+			// 在Shader中添加模糊处理
+			if (uniforms.mirrorSampler) {
+				// 完全禁用反射 - 设置反射强度为0
+				if (uniforms.reflectivity) {
+					uniforms.reflectivity.value = 0;  // 将反射率设为0，禁用反射
+					console.log('Water reflection disabled (reflectivity = 0)');
+				}
+				
+				// 禁用镜面采样器
+				if (uniforms.mirrorSampler.value) {
+					// 尝试禁用反射贴图的渲染
+					try {
+						uniforms.mirrorSampler.value.needsUpdate = false;
+					} catch (e) {
+						console.log('Could not disable mirror sampler update', e);
+					}
+				}
+				
+				// 如果有eye参数，也可以尝试禁用
+				if (uniforms.eye) {
+					uniforms.eye.value = new THREE.Vector3(0, 0, 0);
+				}
 			}
+
+			initRef.current = true;
 		}
 	});
 
@@ -71,4 +79,4 @@ function Ocean() {
 	);
 }
 
-export default Ocean
+export default Ocean;
