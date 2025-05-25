@@ -18,7 +18,7 @@ const Scene = () => {
 			<color attach="background" args={['#311A01']} />
 			<Gallery />
 			<Ocean />
-			<Fog />
+			
 			<Environment files={'./textures/preller_drive_1k.hdr'} />
 		</Canvas>
 	);
