@@ -72,7 +72,7 @@ function Ocean() {
 			>
 				<planeGeometry args={[2000, 3000]} />
 				<meshBasicMaterial
-					color="#CF9D47"
+					color="#462D03"
 					transparent
 					opacity={0.7}
 					side={THREE.DoubleSide}
