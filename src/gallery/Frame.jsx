@@ -17,25 +17,10 @@ const Frame = ({
   const image = useRef();
   const frame = useRef();
   const [hovered, hover] = useState(false);
-  const [imageOpacity, setImageOpacity] = useState(0);
   const name = getUuid(url);
   useCursor(hovered);
 
   useFrame((state, delta) => {
-    const zDistance = Math.abs(state.camera.position.z - position[2]);
-    
-    const showThreshold = 120;
-    const fadeThreshold = 180;
-    
-    let opacity = 0;
-    if (zDistance < showThreshold) {
-      opacity = 1;
-    } else if (zDistance < fadeThreshold) {
-      opacity = 1 - (zDistance - showThreshold) / (fadeThreshold - showThreshold);
-    }
-    
-    setImageOpacity(Math.max(0, Math.min(1, opacity)));
-
     image.current.material.zoom = 1.1;
     easing.damp3(
       image.current.scale,
@@ -54,7 +39,6 @@ const Frame = ({
   const handleClick = (e) => {
     e.stopPropagation();
     if (animationComplete && onFrameClick) {
-      // Pass the x position to determine which side the frame is on
       onFrameClick(title, position[0]);
     }
   };
@@ -94,8 +78,6 @@ const Frame = ({
           ref={image}
           position={[0, 0, 1]}
           url={url}
-          transparent
-          opacity={imageOpacity}
         />
       </mesh>
       <Text
