@@ -19,7 +19,10 @@ const Scene = () => {
 			<Gallery />
 			<Ocean />
 			<Fog />
-			<Environment files={'./textures/preller_drive_1k.hdr'} />
+			<Environment 
+				files={'./textures/preller_drive_1k.hdr'} 
+				intensity={0.3}  // 降低环境光强度
+			/>
 		</Canvas>
 	);
 };
