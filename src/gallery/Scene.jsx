@@ -17,7 +17,7 @@ const Scene = () => {
 			}}
 		>
 			{/* <OrbitControls /> */}
-			<color attach="background" args={['#3B2904']} />
+			<color attach="background" args={['#261002']} />
 			<Gallery />
 			<Ocean />
 			<Fog />
