@@ -276,6 +276,7 @@ const Gallery = () => {
 	const { progress } = useProgress();
 	const [times, setTimes] = useState([]);
 	const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+	const [currentRotation, setCurrentRotation] = useState({ x: 0, y: 0 });
 	
 	const animationRef = useRef({
 		complete: false,
@@ -347,16 +348,27 @@ const Gallery = () => {
 				state.camera.position.y = 7;
 				
 				if (animationRef.current.complete) {
-					const rotationSpeed = 0.1;
-					state.camera.rotation.y = mousePosition.x * rotationSpeed;
-					state.camera.rotation.x = mousePosition.y * rotationSpeed;
+					// Smooth rotation with easing
+					const rotationSpeed = 0.05;
+					const easingFactor = 0.1;
+					
+					const targetRotationY = mousePosition.x * rotationSpeed;
+					const targetRotationX = mousePosition.y * rotationSpeed;
+					
+					setCurrentRotation(prev => ({
+						x: prev.x + (targetRotationX - prev.x) * easingFactor,
+						y: prev.y + (targetRotationY - prev.y) * easingFactor
+					}));
+					
+					state.camera.rotation.y = currentRotation.y;
+					state.camera.rotation.x = currentRotation.x;
 				}
 				
 				const currentZ = state.camera.position.z;
 				const distance = animationRef.current.targetZ - currentZ;
 				
 				if (Math.abs(distance) > 0.1) {
-					const acceleration = 0.02;
+					const acceleration = 0.05;
 					const step = distance * acceleration;
 					state.camera.position.z += step;
 				}
