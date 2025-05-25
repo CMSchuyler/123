@@ -253,5 +253,128 @@ const images = [
 		title: 'The winter in Donghua University 5',
 	},
 	{
-	}
-]
+		position: [15, 7, 1025],
+		rotation: [0, -Math.PI / 12, 0],
+		url: './photos/mmexport1689910576643.jpg',
+		title: 'The path in front of my home 5',
+	},
+	{
+		position: [15, 7, 1075],
+		rotation: [0, -Math.PI / 12, 0],
+		url: './photos/mmexport1689910070987.jpg',
+		title: 'The tree in winter 6',
+	},
+	{
+		position: [15, 7, 1125],
+		rotation: [0, -Math.PI / 12, 0],
+		url: './photos/mmexport1689910425322.jpg',
+		title: 'Huangshan mountains 6',
+	},
+];
+
+const Gallery = () => {
+	const { progress } = useProgress();
+	const [times, setTimes] = useState([]);
+	
+	const animationRef = useRef({
+		complete: false,
+		initialPositionSet: false,
+		currentZ: 1150,
+		targetZ: 1150
+	});
+	
+	const logDebug = (message) => {
+		console.log(`[Debug] ${message}`);
+	};
+	
+	useEffect(() => {
+		const wheelHandler = (event) => {
+			event.preventDefault();
+			
+			logDebug(`Wheel event detected. Animation complete: ${animationRef.current.complete}`);
+			
+			if (animationRef.current.complete) {
+				const scrollDirection = Math.sign(event.deltaY);
+				const scrollAmount = 10;
+				
+				const newTarget = animationRef.current.targetZ - scrollDirection * scrollAmount;
+				animationRef.current.targetZ = Math.max(50, Math.min(1150, newTarget));
+				
+				logDebug(`Wheel processed: direction=${scrollDirection}, newTarget=${animationRef.current.targetZ}`);
+			}
+		};
+		
+		window.addEventListener('wheel', wheelHandler, { passive: false });
+		logDebug("Wheel event listener added");
+		
+		return () => {
+			window.removeEventListener('wheel', wheelHandler, { passive: false });
+			logDebug("Wheel event listener removed");
+		};
+	}, []);
+	
+	useFrame((state) => {
+		const elapsedTime = state.clock.getElapsedTime();
+		
+		if (progress === 100) {
+			if (times.length === 0) setTimes([elapsedTime]);
+			const delay = 8 + times[0];
+			
+			if (elapsedTime < delay) {
+				const startZ = 1000;
+				const endZ = 1150;
+				const t = elapsedTime / delay;
+				
+				state.camera.position.z = startZ + t * (endZ - startZ);
+				state.camera.position.y = 7;
+				state.camera.rotation.x = -Math.PI * 0.5 + t * Math.PI * 0.5;
+				
+				animationRef.current.currentZ = state.camera.position.z;
+				animationRef.current.targetZ = endZ;
+				animationRef.current.complete = false;
+				
+				if (elapsedTime % 1 < 0.01) {
+					logDebug(`Animation progress: ${Math.round(t * 100)}%, z=${state.camera.position.z.toFixed(2)}`);
+				}
+			} else {
+				if (!animationRef.current.initialPositionSet) {
+					logDebug("Animation complete, enabling wheel control");
+					animationRef.current.currentZ = state.camera.position.z;
+					animationRef.current.targetZ = state.camera.position.z;
+					animationRef.current.initialPositionSet = true;
+					animationRef.current.complete = true;
+					
+					console.log("%c 动画完成！滚轮控制已启用 ", "background: green; color: white; font-size: 20px");
+				}
+				
+				if (!animationRef.current.complete) {
+					animationRef.current.complete = true;
+					logDebug("Re-enabling wheel control");
+				}
+				
+				state.camera.position.y = 7;
+				
+				const currentZ = state.camera.position.z;
+				const distance = animationRef.current.targetZ - currentZ;
+				
+				if (Math.abs(distance) > 0.1) {
+					const acceleration = 0.02;
+					const step = distance * acceleration;
+					state.camera.position.z += step;
+					
+					if (Math.abs(step) > 0.5 || elapsedTime % 2 < 0.01) {
+						logDebug(`Camera moving: current=${currentZ.toFixed(2)}, target=${animationRef.current.targetZ.toFixed(2)}, step=${step.toFixed(2)}`);
+					}
+				}
+			}
+		}
+	});
+
+	return (
+		<group>
+			<Frames images={images} />
+		</group>
+	);
+};
+
+export default Gallery;
