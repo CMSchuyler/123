@@ -62,7 +62,7 @@ function Ocean() {
 				<meshBasicMaterial
 					color="#AB916E"
 					transparent
-					opacity={0.6}
+					opacity={0.7}
 					side={THREE.DoubleSide}
 				/>
 			</mesh>
