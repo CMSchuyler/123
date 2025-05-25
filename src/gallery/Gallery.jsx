@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { useProgress, Html } from '@react-three/drei';
+import { useProgress } from '@react-three/drei';
 import Frames from './Frames';
 
 const images = [
@@ -275,6 +275,8 @@ const images = [
 const Gallery = () => {
 	const { progress } = useProgress();
 	const [times, setTimes] = useState([]);
+	const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+	const [currentRotation, setCurrentRotation] = useState({ x: 0, y: 0 });
 	
 	const animationRef = useRef({
 		complete: false,
@@ -282,16 +284,22 @@ const Gallery = () => {
 		currentZ: 1150,
 		targetZ: 1150
 	});
-	
-	const logDebug = (message) => {
-		console.log(`[Debug] ${message}`);
-	};
-	
+
+	useEffect(() => {
+		const mouseMoveHandler = (event) => {
+			setMousePosition({
+				x: (event.clientX / window.innerWidth) * 2 - 1,
+				y: -(event.clientY / window.innerHeight) * 2 + 1
+			});
+		};
+
+		window.addEventListener('mousemove', mouseMoveHandler);
+		return () => window.removeEventListener('mousemove', mouseMoveHandler);
+	}, []);
+
 	useEffect(() => {
 		const wheelHandler = (event) => {
 			event.preventDefault();
-			
-			logDebug(`Wheel event detected. Animation complete: ${animationRef.current.complete}`);
 			
 			if (animationRef.current.complete) {
 				const scrollDirection = Math.sign(event.deltaY);
@@ -299,21 +307,14 @@ const Gallery = () => {
 				
 				const newTarget = animationRef.current.targetZ - scrollDirection * scrollAmount;
 				animationRef.current.targetZ = Math.max(50, Math.min(1150, newTarget));
-				
-				logDebug(`Wheel processed: direction=${scrollDirection}, newTarget=${animationRef.current.targetZ}`);
 			}
 		};
 		
 		window.addEventListener('wheel', wheelHandler, { passive: false });
-		logDebug("Wheel event listener added");
-		
-		return () => {
-			window.removeEventListener('wheel', wheelHandler, { passive: false });
-			logDebug("Wheel event listener removed");
-		};
+		return () => window.removeEventListener('wheel', wheelHandler, { passive: false });
 	}, []);
 	
-	useFrame((state) => {
+	useFrame((state, delta) => {
 		const elapsedTime = state.clock.getElapsedTime();
 		
 		if (progress === 100) {
@@ -327,44 +328,48 @@ const Gallery = () => {
 				
 				state.camera.position.z = startZ + t * (endZ - startZ);
 				state.camera.position.y = 7;
-				state.camera.rotation.x = -Math.PI * 0.5 + t * Math.PI * 0.5;
+				state.camera.rotation.x = 0;
 				
 				animationRef.current.currentZ = state.camera.position.z;
 				animationRef.current.targetZ = endZ;
 				animationRef.current.complete = false;
-				
-				if (elapsedTime % 1 < 0.01) {
-					logDebug(`Animation progress: ${Math.round(t * 100)}%, z=${state.camera.position.z.toFixed(2)}`);
-				}
 			} else {
 				if (!animationRef.current.initialPositionSet) {
-					logDebug("Animation complete, enabling wheel control");
 					animationRef.current.currentZ = state.camera.position.z;
 					animationRef.current.targetZ = state.camera.position.z;
 					animationRef.current.initialPositionSet = true;
 					animationRef.current.complete = true;
-					
-					console.log("%c 动画完成！滚轮控制已启用 ", "background: green; color: white; font-size: 20px");
 				}
 				
 				if (!animationRef.current.complete) {
 					animationRef.current.complete = true;
-					logDebug("Re-enabling wheel control");
 				}
 				
 				state.camera.position.y = 7;
+				
+				if (animationRef.current.complete) {
+					const rotationSpeed = 0.05;
+					const easingFactor = 0.1;
+					
+					const targetRotationY = -mousePosition.x * rotationSpeed;  // Added negative sign here
+					const targetRotationX = mousePosition.y * rotationSpeed;
+					
+					setCurrentRotation(prev => ({
+						x: prev.x + (targetRotationX - prev.x) * easingFactor,
+						y: prev.y + (targetRotationY - prev.y) * easingFactor
+					}));
+					
+					state.camera.rotation.y = currentRotation.y;
+					state.camera.rotation.x = currentRotation.x;
+				}
 				
 				const currentZ = state.camera.position.z;
 				const distance = animationRef.current.targetZ - currentZ;
 				
 				if (Math.abs(distance) > 0.1) {
-					const acceleration = 0.02;
+					const acceleration = 0.05;
 					const step = distance * acceleration;
 					state.camera.position.z += step;
-					
-					if (Math.abs(step) > 0.5 || elapsedTime % 2 < 0.01) {
-						logDebug(`Camera moving: current=${currentZ.toFixed(2)}, target=${animationRef.current.targetZ.toFixed(2)}, step=${step.toFixed(2)}`);
-					}
 				}
 			}
 		}
