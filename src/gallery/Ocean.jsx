@@ -17,7 +17,7 @@ function Ocean() {
 	waterNormals.repeat.set(4, 4); // 减少重复次数
 
 	// 减小几何体的细分数
-	const geom = useMemo(() => new THREE.PlaneGeometry(2500, 3000, 50, 50), []);
+	const geom = useMemo(() => new THREE.PlaneGeometry(2500, 4000, 50, 50), []);
 	const config = useMemo(
 		() => ({
 			textureWidth: 64, // 降低纹理分辨率
@@ -70,7 +70,7 @@ function Ocean() {
 				rotation-x={-Math.PI / 2}
 				position-y={0.1}
 			>
-				<planeGeometry args={[2500, 3000]} />
+				<planeGeometry args={[2500, 4000]} />
 				<meshBasicMaterial
 					color="#AB916E"
 					transparent
