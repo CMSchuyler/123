@@ -24,8 +24,8 @@ const Frame = ({
 		const zDistance = Math.abs(state.camera.position.z - position[2]);
 		
 		// 设置更小的显示和淡出阈值
-		const showThreshold = 100; // 减小可见范围
-		const fadeThreshold = 150; // 减小淡出范围
+		const showThreshold = 120; // 减小可见范围
+		const fadeThreshold = 180; // 减小淡出范围
 		
 		// 根据z值差计算不透明度
 		let opacity = 0;
