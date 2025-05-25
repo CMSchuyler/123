@@ -37,16 +37,13 @@ const Frame = ({
 		);
 	});
 
-	// Calculate depth offset based on z position and add some randomization
-	const depthOffset = position[2] * 0.0001 + rnd * 0.001;
-
 	return (
 		<group position={position} rotation={rotation}>
 			<mesh
 				name={name}
 				onPointerOver={(e) => (e.stopPropagation(), hover(true))}
 				onPointerOut={() => hover(false)}
-				position={[0, GOLDENRATIO / 2, depthOffset]}
+				position={[0, GOLDENRATIO / 2, 0]}
 				scale={[
 					1 * scaleFactor,
 					0.8 * GOLDENRATIO * scaleFactor,
@@ -59,10 +56,6 @@ const Frame = ({
 					metalness={0.5}
 					roughness={0.5}
 					envMapIntensity={2}
-					depthWrite={true}
-					polygonOffset={true}
-					polygonOffsetFactor={-4}
-					polygonOffsetUnits={-4}
 				/>
 				<mesh
 					ref={frame}
@@ -71,27 +64,20 @@ const Frame = ({
 					position={[0, 0, 0.2]}
 				>
 					<boxGeometry />
-					<meshBasicMaterial 
-						toneMapped={false} 
-						fog={false}
-						depthWrite={true}
-					/>
+					<meshBasicMaterial toneMapped={false} fog={false} />
 				</mesh>
 				<Image
 					raycast={() => null}
 					ref={image}
 					position={[0, 0, 0.7]}
 					url={url}
-					transparent={true}
-					depthWrite={true}
-					depthTest={true}
 				/>
 			</mesh>
 			<Text
 				maxWidth={0.1}
 				anchorX="left"
 				anchorY="top"
-				position={[8, GOLDENRATIO * 6.5, depthOffset]}
+				position={[8, GOLDENRATIO * 6.5, 0]}
 				fontSize={0.5}
 			>
 				{title}
