@@ -4,7 +4,7 @@ import { useFrame } from '@react-three/fiber';
 import { useProgress } from '@react-three/drei';
 
 const images = [
-	// 左列 - 向右倾斜 (z轴交错排列) - 前面22个
+	// Left column - Right tilt (z-axis staggered) - First 22
 	{
 		position: [-15, 7, 50],
 		rotation: [0, Math.PI / 12, 0],
@@ -137,7 +137,7 @@ const images = [
 		url: './photos/3M5A9169.png',
 		title: 'Baoshan temple 6',
 	},
-	// 右列 - 向左倾斜 (z轴交错排列) - 后面22个
+	// Right column - Left tilt (z-axis staggered) - Last 22
 	{
 		position: [15, 7, 75],
 		rotation: [0, -Math.PI / 12, 0],
@@ -276,7 +276,6 @@ const Gallery = () => {
 	const { progress } = useProgress();
 	const [times, setTimes] = useState([]);
 	
-	// 简化状态管理
 	const animationRef = useRef({
 		complete: false,
 		initialPositionSet: false,
@@ -284,42 +283,27 @@ const Gallery = () => {
 		targetZ: 1150
 	});
 	
-	// 添加调试信息的函数
 	const logDebug = (message) => {
 		console.log(`[Debug] ${message}`);
 	};
 	
-	// 添加鼠标滚轮事件监听
 	useEffect(() => {
-		// 创建处理函数的引用，以便在清理时可以引用相同的函数
 		const wheelHandler = (event) => {
-			// 阻止默认行为，防止页面滚动
 			event.preventDefault();
 			
-			logDebug(`Wheel event detected. Animation complete: ${animationRef.current.complete}`);
-			
-			// 动画完成后才响应滚轮事件
 			if (animationRef.current.complete) {
-				// 确定滚动方向和滚动量
 				const scrollDirection = Math.sign(event.deltaY);
-				const scrollAmount = 10; // 增大滚动量使效果更明显
+				const scrollAmount = 10;
 				
-				// 计算新的目标位置
 				const newTarget = animationRef.current.targetZ - scrollDirection * scrollAmount;
 				animationRef.current.targetZ = Math.max(50, Math.min(1150, newTarget));
-				
-				logDebug(`Wheel processed: direction=${scrollDirection}, newTarget=${animationRef.current.targetZ}`);
 			}
 		};
 		
-		// 添加事件监听器，使用 { passive: false } 允许调用 preventDefault()
 		window.addEventListener('wheel', wheelHandler, { passive: false });
-		logDebug("Wheel event listener added");
 		
-		// 确保在组件卸载时清理事件监听器
 		return () => {
 			window.removeEventListener('wheel', wheelHandler, { passive: false });
-			logDebug("Wheel event listener removed");
 		};
 	}, []);
 	
@@ -331,66 +315,39 @@ const Gallery = () => {
 			const delay = 8 + times[0];
 			
 			if (elapsedTime < delay) {
-				// 初始动画进行中
 				const startZ = 1000;
 				const endZ = 1150;
 				const t = elapsedTime / delay;
 				
-				// 更新相机位置
 				state.camera.position.z = startZ + t * (endZ - startZ);
 				state.camera.position.y = 7;
 				state.camera.rotation.x = -Math.PI * 0.5 + t * Math.PI * 0.5;
 				
-				// 更新引用值
 				animationRef.current.currentZ = state.camera.position.z;
 				animationRef.current.targetZ = endZ;
 				animationRef.current.complete = false;
 				
-				if (elapsedTime % 1 < 0.01) {
-					logDebug(`Animation progress: ${Math.round(t * 100)}%, z=${state.camera.position.z.toFixed(2)}`);
-				}
 			} else {
-				// 初始动画完成
-				
-				// 初始化相机控制
 				if (!animationRef.current.initialPositionSet) {
-					logDebug("Animation complete, enabling wheel control");
-					// 重要：动画结束后立即标记为完成状态
 					animationRef.current.currentZ = state.camera.position.z;
 					animationRef.current.targetZ = state.camera.position.z;
 					animationRef.current.initialPositionSet = true;
 					animationRef.current.complete = true;
-					
-					// 添加到控制台的明显消息
-					console.log("%c 动画完成！滚轮控制已启用 ", "background: green; color: white; font-size: 20px");
 				}
 				
-				// 确保动画完成标志始终为true
 				if (!animationRef.current.complete) {
 					animationRef.current.complete = true;
-					logDebug("Re-enabling wheel control");
 				}
 				
-				// 确保相机Y坐标始终为7
 				state.camera.position.y = 7;
 				
-				// 更新当前Z位置参考（使用实际相机位置）
 				const currentZ = state.camera.position.z;
-				
-				// 计算与目标的距离
 				const distance = animationRef.current.targetZ - currentZ;
 				
-				// 只有当距离足够大时才移动
 				if (Math.abs(distance) > 0.1) {
-					// 简单的平滑过渡
-					const acceleration = 0.02; // 基础加速度参数 - 控制相机移动速度
+					const acceleration = 0.02;
 					const step = distance * acceleration;
 					state.camera.position.z += step;
-					
-					// 定期记录相机移动情况
-					if (Math.abs(step) > 0.5 || elapsedTime % 2 < 0.01) {
-						logDebug(`Camera moving: current=${currentZ.toFixed(2)}, target=${animationRef.current.targetZ.toFixed(2)}, step=${step.toFixed(2)}`);
-					}
 				}
 			}
 		}
