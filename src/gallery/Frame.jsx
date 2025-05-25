@@ -20,22 +20,22 @@ const Frame = ({
 	useCursor(hovered);
 
 	useFrame((state, delta) => {
-		// 直接计算z值差
+		// 计算相机与图片的z轴距离
 		const zDistance = Math.abs(state.camera.position.z - position[2]);
 		
-		// 设置显示和淡出的阈值
-		const showThreshold = 200;
-		const fadeThreshold = 300;
+		// 设置更小的显示和淡出阈值
+		const showThreshold = 100; // 减小可见范围
+		const fadeThreshold = 150; // 减小淡出范围
 		
 		// 根据z值差计算不透明度
-		if (zDistance < fadeThreshold) {
-			const opacity = zDistance > showThreshold 
-				? 1 - (zDistance - showThreshold) / (fadeThreshold - showThreshold)
-				: 1;
-			setImageOpacity(Math.max(0, Math.min(1, opacity)));
-		} else {
-			setImageOpacity(0);
+		let opacity = 0;
+		if (zDistance < showThreshold) {
+			opacity = 1; // 在显示阈值内完全不透明
+		} else if (zDistance < fadeThreshold) {
+			opacity = 1 - (zDistance - showThreshold) / (fadeThreshold - showThreshold);
 		}
+		
+		setImageOpacity(Math.max(0, Math.min(1, opacity)));
 
 		image.current.material.zoom = 1.1;
 		easing.damp3(
