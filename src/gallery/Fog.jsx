@@ -8,7 +8,7 @@ const Fog = () => {
 				scale={100}
 				color="#ffffff"
 				rotation={[0, 0, 0.8]}
-				position={[500, 100, -800]}
+				position={[500, 500, -800]}
 				depthTest={true}
 				texture={cloud}
 			/>
@@ -16,7 +16,7 @@ const Fog = () => {
 				scale={100}
 				color="#ffffff"
 				rotation={[0, 0, 0.8]}
-				position={[0, 100, -600]}
+				position={[0, 500, -600]}
 				depthTest={true}
 				texture={cloud}
 			/>
@@ -24,7 +24,7 @@ const Fog = () => {
 				scale={100}
 				color="#ffffff"
 				rotation={[0, 0, 0.8]}
-				position={[-500, 100, -800]}
+				position={[-500, 500, -800]}
 				depthTest={true}
 				texture={cloud}
 			/>
