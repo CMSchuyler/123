@@ -63,7 +63,7 @@ const Fog = () => {
 				scale={70}
 				color="#B4B4B4"
 				rotation={[0, 0, 0.8]}
-				position={[-500, 300, -1200]}
+				position={[-500, 300, -600]}
 				depthTest={false}
 				opacity={cloudsOpacity[2]}
 				transparent
