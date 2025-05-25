@@ -25,7 +25,7 @@ const Frame = ({
 		
 		// 设置更小的显示和淡出阈值
 		const showThreshold = 90; // 减小可见范围
-		const fadeThreshold = 100; // 减小淡出范围
+		const fadeThreshold = 120; // 减小淡出范围
 		
 		// 根据z值差计算不透明度
 		let opacity = 0;
