@@ -18,7 +18,7 @@ const Fog = () => {
 			
 			// 设置显示和淡出阈值
 			const showThreshold = 800;
-			const fadeThreshold = 1200;
+			const fadeThreshold = 1000;
 			
 			// 根据距离计算不透明度
 			let opacity = 0;
@@ -38,10 +38,10 @@ const Fog = () => {
 		<>
 			<Cloud
 				ref={(el) => (cloudsRef.current[0] = el)}
-				scale={100}
+				scale={70}
 				color="#B4B4B4"
 				rotation={[0, 0, 0.8]}
-				position={[500, 100, -1200]}
+				position={[500, 300, -1200]}
 				depthTest={false}
 				opacity={cloudsOpacity[0]}
 				transparent
@@ -49,10 +49,10 @@ const Fog = () => {
 			/>
 			<Cloud
 				ref={(el) => (cloudsRef.current[1] = el)}
-				scale={100}
+				scale={70}
 				color="#B4B4B4"
 				rotation={[0, 0, 0.8]}
-				position={[0, 100, -1000]}
+				position={[0, 300, -1000]}
 				depthTest={false}
 				opacity={cloudsOpacity[1]}
 				transparent
@@ -60,10 +60,10 @@ const Fog = () => {
 			/>
 			<Cloud
 				ref={(el) => (cloudsRef.current[2] = el)}
-				scale={100}
+				scale={70}
 				color="#B4B4B4"
 				rotation={[0, 0, 0.8]}
-				position={[-500, 100, -1200]}
+				position={[-500, 300, -1200]}
 				depthTest={false}
 				opacity={cloudsOpacity[2]}
 				transparent
