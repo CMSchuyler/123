@@ -52,6 +52,20 @@ function Ocean() {
 				rotation-x={-Math.PI / 2}
 				position-y={0}
 			/>
+      {/* 添加半透明遮罩层 */}
+			<mesh
+				ref={overlayRef}
+				rotation-x={-Math.PI / 2}
+				position-y={0.1} // 略微高于水面
+			>
+				<planeGeometry args={[2000, 3000]} />
+				<meshBasicMaterial
+					color="#AB916E"
+					transparent
+					opacity={0.3}
+					side={THREE.DoubleSide}
+				/>
+			</mesh>
 		</group>
 	);
 }
