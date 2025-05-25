@@ -11,6 +11,7 @@ const Frame = ({
 	rotation,
 	scaleFactor,
 	GOLDENRATIO,
+	onFrameClick,
 }) => {
 	const image = useRef();
 	const frame = useRef();
@@ -20,17 +21,13 @@ const Frame = ({
 	useCursor(hovered);
 
 	useFrame((state, delta) => {
-		// 计算相机与图片的z轴距离
 		const zDistance = Math.abs(state.camera.position.z - position[2]);
+		const showThreshold = 120;
+		const fadeThreshold = 180;
 		
-		// 设置更小的显示和淡出阈值
-		const showThreshold = 120; // 减小可见范围
-		const fadeThreshold = 180; // 减小淡出范围
-		
-		// 根据z值差计算不透明度
 		let opacity = 0;
 		if (zDistance < showThreshold) {
-			opacity = 1; // 在显示阈值内完全不透明
+			opacity = 1;
 		} else if (zDistance < fadeThreshold) {
 			opacity = 1 - (zDistance - showThreshold) / (fadeThreshold - showThreshold);
 		}
@@ -53,7 +50,14 @@ const Frame = ({
 	});
 
 	return (
-		<group position={position} rotation={rotation}>
+		<group 
+			position={position} 
+			rotation={rotation}
+			onClick={(e) => {
+				e.stopPropagation();
+				onFrameClick(position, title);
+			}}
+		>
 			<mesh
 				name={name}
 				onPointerOver={(e) => (e.stopPropagation(), hover(true))}
