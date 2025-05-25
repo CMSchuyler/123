@@ -1,6 +1,7 @@
 import React from 'react';
 import Gallery from './Gallery';
 import Ocean from './Ocean';
+import Fog from './Fog';
 import { Environment } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 
@@ -17,6 +18,7 @@ const Scene = () => {
 			<color attach="background" args={['#311A01']} />
 			<Gallery />
 			<Ocean />
+			<Fog />
 			<Environment files={'./textures/preller_drive_1k.hdr'} />
 		</Canvas>
 	);
