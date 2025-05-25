@@ -21,7 +21,7 @@ const Scene = () => {
 			<Fog />
 			<Environment 
 				files={'./textures/preller_drive_1k.hdr'} 
-				intensity={0.3}  // 降低环境光强度
+				intensity={0.5}  // 降低环境光强度
 			/>
 		</Canvas>
 	);
