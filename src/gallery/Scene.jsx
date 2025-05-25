@@ -4,8 +4,7 @@ import Ocean from './Ocean';
 import Fog from './Fog';
 import { Environment } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
-import { EffectComposer, Bloom, DepthOfField, Noise } from '@react-three/postprocessing';
-import { BlendFunction } from 'postprocessing';
+import { EffectComposer, Bloom, DepthOfField } from '@react-three/postprocessing';
 
 const Scene = () => {
 	return (
@@ -34,11 +33,6 @@ const Scene = () => {
 					luminanceThreshold={0.1} 
 					luminanceSmoothing={0.9} 
 					height={300}
-				/>
-				<Noise 
-					opacity={0.8}
-					blendFunction={BlendFunction.OVERLAY}
-					premultiply
 				/>
 			</EffectComposer>
 		</Canvas>
