@@ -70,7 +70,7 @@ function Ocean() {
 				rotation-x={-Math.PI / 2}
 				position-y={0.1}
 			>
-				<planeGeometry args={[2000, 3000]} />
+				<planeGeometry args={[2500, 3000]} />
 				<meshBasicMaterial
 					color="#AB916E"
 					transparent
