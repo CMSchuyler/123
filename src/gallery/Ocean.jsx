@@ -13,42 +13,48 @@ function Ocean() {
 		'./textures/waternormals.jpeg'
 	);
 	waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping;
+	waterNormals.repeat.set(8, 8); // 增加重复次数，使水面纹理更细腻
 
 	const geom = useMemo(() => new THREE.PlaneGeometry(1500, 2500), []);
 	const config = useMemo(
 		() => ({
-			textureWidth: 256,  // 降低纹理分辨率
-			textureHeight: 256,  // 降低纹理分辨率
+			textureWidth: 128,  // 进一步降低纹理分辨率
+			textureHeight: 128,  // 进一步降低纹理分辨率
 			waterNormals,
 			sunDirection: new THREE.Vector3(),
-			sunColor: 0x001133,  // 调暗太阳光颜色
-			waterColor: 0x000c06,
-			distortionScale: 1,  // 显著增加扭曲程度
-			fog: true,  // 启用雾效果
+			sunColor: 0x000000,  // 完全消除太阳光反射
+			waterColor: 0x001414,  // 调整水色
+			distortionScale: 0.5,  // 降低扭曲程度
+			fog: true,
 			format: gl.encoding,
-			alpha: 0.8,  // 降低透明度
-			mirror: 0.0,  // 进一步降低反射
+			alpha: 0.3,  // 显著降低不透明度
+			mirror: 0.1,  // 最小化反射
 		}),
 		[waterNormals]
 	);
 
 	useFrame((state, delta) => {
-		ref.current.material.uniforms.time.value += delta * 0.05;  // 增加波动速度
+		ref.current.material.uniforms.time.value += delta * 0.15;
 		
-		// 动态调整uniforms
-		if (ref.current.material.uniforms) {
-			const uniforms = ref.current.material.uniforms;
+		// 动态调整材质属性
+		if (ref.current.material) {
+			const material = ref.current.material;
 			
-			// 增加水面的模糊度
-			if (uniforms.normalSampler) {
-				uniforms.normalSampler.value = waterNormals;
-				waterNormals.minFilter = THREE.LinearFilter;
-				waterNormals.magFilter = THREE.LinearFilter;
-			}
+			// 确保材质是透明的
+			material.transparent = true;
+			material.opacity = 0.3;
 			
-			// 调整水面的整体亮度
-			if (uniforms.waterColor) {
-				uniforms.waterColor.value.setHex(0x000c06);
+			// 调整混合模式
+			material.blending = THREE.AdditiveBlending;
+			
+			// 禁用深度写入以改善透明效果
+			material.depthWrite = false;
+			
+			// 调整材质的其他属性
+			if (material.uniforms) {
+				material.uniforms.distortionScale.value = 0.5;
+				material.uniforms.size.value = 2;
+				material.uniforms.alpha.value = 0.3;
 			}
 		}
 	});
