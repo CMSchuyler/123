@@ -17,7 +17,7 @@ function Ocean() {
 	waterNormals.repeat.set(4, 4); // 减少重复次数
 
 	// 减小几何体的细分数
-	const geom = useMemo(() => new THREE.PlaneGeometry(2000, 3000, 50, 50), []);
+	const geom = useMemo(() => new THREE.PlaneGeometry(2500, 3000, 50, 50), []);
 	const config = useMemo(
 		() => ({
 			textureWidth: 64, // 降低纹理分辨率
