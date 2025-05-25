@@ -15,14 +15,11 @@ const Scene = () => {
 				rotation: [-Math.PI * 0.5, 0, 0],
 			}}
 		>
-			<color attach="background" args={['#1A0F0A']} />
+			<color attach="background" args={['#653D2F']} />
 			<Gallery />
 			<Ocean />
 			<Fog />
-			<Environment 
-				files={'./textures/preller_drive_1k.hdr'} 
-				intensity={0.3}  // 大幅降低环境光强度
-			/>
+			<Environment files={'./textures/preller_drive_1k.hdr'} />
 		</Canvas>
 	);
 };
