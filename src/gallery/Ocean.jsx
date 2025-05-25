@@ -24,7 +24,6 @@ function Ocean() {
 			textureHeight: 64,
 			waterNormals,
 			sunDirection: new THREE.Vector3(),
-			sunColor: 0x860E0A,
 			waterColor: 0x261502,
 			distortionScale: 8.0,
 			fog: true,
