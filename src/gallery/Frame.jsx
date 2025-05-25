@@ -54,7 +54,8 @@ const Frame = ({
   const handleClick = (e) => {
     e.stopPropagation();
     if (animationComplete && onFrameClick) {
-      onFrameClick(title);
+      // Pass the x position to determine which side the frame is on
+      onFrameClick(title, position[0]);
     }
   };
 

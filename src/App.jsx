@@ -5,13 +5,15 @@ import { useState } from 'react';
 function App() {
   const [panelInfo, setPanelInfo] = useState({
     visible: false,
-    title: ''
+    title: '',
+    position: 0
   });
 
-  const handleFrameClick = (title) => {
+  const handleFrameClick = (title, position) => {
     setPanelInfo(prev => ({
       visible: !prev.visible || prev.title !== title,
-      title
+      title,
+      position
     }));
   };
 
@@ -29,6 +31,7 @@ function App() {
         title={panelInfo.title}
         visible={panelInfo.visible}
         onClose={handlePanelClose}
+        position={panelInfo.position}
       />
     </>
   );

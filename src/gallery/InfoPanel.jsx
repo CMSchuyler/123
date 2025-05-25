@@ -1,13 +1,17 @@
 import React from 'react';
 
-const InfoPanel = ({ title, visible, onClose }) => {
+const InfoPanel = ({ title, visible, onClose, position }) => {
   if (!visible) return null;
+  
+  // If position is negative (left side), show panel on right side
+  // If position is positive (right side), show panel on left side
+  const side = position < 0 ? 'right' : 'left';
   
   return (
     <div 
       style={{
         position: 'fixed',
-        right: '0',
+        [side]: '0',
         top: '0',
         width: '300px',
         height: '100%',
@@ -15,7 +19,7 @@ const InfoPanel = ({ title, visible, onClose }) => {
         color: '#fff',
         padding: '20px',
         transition: 'all 0.3s ease',
-        transform: visible ? 'translateX(0)' : 'translateX(100%)',
+        transform: visible ? 'translateX(0)' : `translateX(${side === 'left' ? '-100%' : '100%'})`,
         zIndex: 1000,
         cursor: 'pointer'
       }}
