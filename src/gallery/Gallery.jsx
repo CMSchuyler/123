@@ -1,7 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
-import Frames from './Frames';
-import { useFrame } from '@react-three/fiber';
+import React from 'react';
+import { easing } from 'maath';
+import * as THREE from 'three';
+import { useRef, useState, useEffect } from 'react';
 import { useProgress } from '@react-three/drei';
+import Frame from './Frame';
 
 const images = [
 	// Left column - Right tilt (z-axis staggered) - First 22
@@ -313,7 +315,7 @@ const Gallery = () => {
 		return () => window.removeEventListener('wheel', wheelHandler, { passive: false });
 	}, []);
 	
-	useFrame((state) => {
+	useFrame((state, delta) => {
 		const elapsedTime = state.clock.getElapsedTime();
 		
 		if (progress === 100) {
@@ -327,7 +329,7 @@ const Gallery = () => {
 				
 				state.camera.position.z = startZ + t * (endZ - startZ);
 				state.camera.position.y = 7;
-				state.camera.rotation.x = -Math.PI * 0.5 + t * Math.PI * 0.5;
+				state.camera.rotation.x = 0;
 				
 				animationRef.current.currentZ = state.camera.position.z;
 				animationRef.current.targetZ = endZ;
@@ -350,7 +352,7 @@ const Gallery = () => {
 				if (animationRef.current.complete) {
 					const rotationSpeed = 0.1;
 					state.camera.rotation.y = mousePosition.x * rotationSpeed;
-					state.camera.rotation.x = Math.PI / 2 + mousePosition.y * rotationSpeed;
+					state.camera.rotation.x = mousePosition.y * rotationSpeed;
 				}
 				
 				const currentZ = state.camera.position.z;
