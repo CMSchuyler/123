@@ -6,21 +6,23 @@ import Frame from './Frame';
 
 const GOLDENRATIO = 1.61803398875;
 
-const Frames = ({ images, q = new THREE.Quaternion(), p = new THREE.Vector3() }) => {
-	const ref = useRef();
+const Frames = ({ images, q = new THREE.Quaternion(), p = new THREE.Vector3(), onFrameClick, animationComplete }) => {
+  const ref = useRef();
 
-	return (
-		<group ref={ref}>
-			{images.map((props) => (
-				<Frame
-					key={props.url}
-					{...props}
-					GOLDENRATIO={GOLDENRATIO}
-					scaleFactor={15}
-				/>
-			))}
-		</group>
-	);
+  return (
+    <group ref={ref}>
+      {images.map((props) => (
+        <Frame
+          key={props.url}
+          {...props}
+          GOLDENRATIO={GOLDENRATIO}
+          scaleFactor={15}
+          onFrameClick={onFrameClick}
+          animationComplete={animationComplete}
+        />
+      ))}
+    </group>
+  );
 };
 
 export default Frames;
