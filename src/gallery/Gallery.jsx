@@ -275,6 +275,7 @@ const images = [
 const Gallery = () => {
 	const { progress } = useProgress();
 	const [times, setTimes] = useState([]);
+	const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 	
 	const animationRef = useRef({
 		complete: false,
@@ -282,11 +283,19 @@ const Gallery = () => {
 		currentZ: 1150,
 		targetZ: 1150
 	});
-	
-	const logDebug = (message) => {
-		console.log(`[Debug] ${message}`);
-	};
-	
+
+	useEffect(() => {
+		const mouseMoveHandler = (event) => {
+			setMousePosition({
+				x: (event.clientX / window.innerWidth) * 2 - 1,
+				y: -(event.clientY / window.innerHeight) * 2 + 1
+			});
+		};
+
+		window.addEventListener('mousemove', mouseMoveHandler);
+		return () => window.removeEventListener('mousemove', mouseMoveHandler);
+	}, []);
+
 	useEffect(() => {
 		const wheelHandler = (event) => {
 			event.preventDefault();
@@ -301,10 +310,7 @@ const Gallery = () => {
 		};
 		
 		window.addEventListener('wheel', wheelHandler, { passive: false });
-		
-		return () => {
-			window.removeEventListener('wheel', wheelHandler, { passive: false });
-		};
+		return () => window.removeEventListener('wheel', wheelHandler, { passive: false });
 	}, []);
 	
 	useFrame((state) => {
@@ -326,7 +332,6 @@ const Gallery = () => {
 				animationRef.current.currentZ = state.camera.position.z;
 				animationRef.current.targetZ = endZ;
 				animationRef.current.complete = false;
-				
 			} else {
 				if (!animationRef.current.initialPositionSet) {
 					animationRef.current.currentZ = state.camera.position.z;
@@ -340,6 +345,13 @@ const Gallery = () => {
 				}
 				
 				state.camera.position.y = 7;
+				
+				// 相机跟随鼠标移动
+				if (animationRef.current.complete) {
+					const rotationSpeed = 0.1;
+					state.camera.rotation.y = mousePosition.x * rotationSpeed;
+					state.camera.rotation.x = Math.PI / 2 + mousePosition.y * rotationSpeed;
+				}
 				
 				const currentZ = state.camera.position.z;
 				const distance = animationRef.current.targetZ - currentZ;
