@@ -5,7 +5,7 @@ const Fog = () => {
 	return (
 		<>
 			<Cloud
-				scale={100}
+				scale={50}
 				color="#ffffff"
 				rotation={[0, 0, 0.8]}
 				position={[500, 300, -800]}
@@ -13,7 +13,7 @@ const Fog = () => {
 				texture={cloud}
 			/>
 			<Cloud
-				scale={100}
+				scale={50}
 				color="#ffffff"
 				rotation={[0, 0, 0.8]}
 				position={[0, 300, -600]}
@@ -21,7 +21,7 @@ const Fog = () => {
 				texture={cloud}
 			/>
 			<Cloud
-				scale={100}
+				scale={50}
 				color="#ffffff"
 				rotation={[0, 0, 0.8]}
 				position={[-500, 300, -800]}
