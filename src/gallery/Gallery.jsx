@@ -328,7 +328,7 @@ const Gallery = () => {
 				
 				state.camera.position.z = startZ + t * (endZ - startZ);
 				state.camera.position.y = 7;
-				state.camera.rotation.x = 2;
+				state.camera.rotation.x = 0;
 				
 				animationRef.current.currentZ = state.camera.position.z;
 				animationRef.current.targetZ = endZ;
