@@ -75,3 +75,5 @@ function Ocean() {
 		</group>
 	);
 }
+
+export default Ocean
