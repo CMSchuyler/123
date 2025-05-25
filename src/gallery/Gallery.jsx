@@ -348,11 +348,10 @@ const Gallery = () => {
 				state.camera.position.y = 7;
 				
 				if (animationRef.current.complete) {
-					// Smooth rotation with easing
 					const rotationSpeed = 0.05;
 					const easingFactor = 0.1;
 					
-					const targetRotationY = mousePosition.x * rotationSpeed;
+					const targetRotationY = -mousePosition.x * rotationSpeed;  // Added negative sign here
 					const targetRotationX = mousePosition.y * rotationSpeed;
 					
 					setCurrentRotation(prev => ({
