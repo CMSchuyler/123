@@ -84,7 +84,7 @@ const Frame = ({
 				<Image
 					raycast={() => null}
 					ref={image}
-					position={[0, 0, 0.7]}
+					position={[0, 0, 1]}
 					url={url}
 					transparent
 					opacity={imageOpacity}
