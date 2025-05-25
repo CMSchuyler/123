@@ -31,7 +31,7 @@ const Frame = ({
 		);
 		easing.dampC(
 			frame.current.material.color,
-			hovered ? '#a3df00' : 'white',
+			hovered ? '#AB130B' : 'white',
 			0.1,
 			delta
 		);
