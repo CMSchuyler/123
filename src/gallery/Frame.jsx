@@ -3,7 +3,6 @@ import { easing } from 'maath';
 import getUuid from 'uuid-by-string';
 import { useCursor, Image, Text } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
-import * as THREE from 'three';
 
 const Frame = ({
 	url,
@@ -17,30 +16,24 @@ const Frame = ({
 	const frame = useRef();
 	const [hovered, hover] = useState(false);
 	const [imageOpacity, setImageOpacity] = useState(0);
-	const [shouldShow, setShouldShow] = useState(false);
 	const name = getUuid(url);
 	useCursor(hovered);
 
 	useFrame((state, delta) => {
-		// 使用 THREE.Vector3 进行更精确的距离计算
-		const framePosition = new THREE.Vector3(position[0], position[1], position[2]);
-		const cameraPosition = new THREE.Vector3();
-		state.camera.getWorldPosition(cameraPosition);
+		// 直接计算z值差
+		const zDistance = Math.abs(state.camera.position.z - position[2]);
 		
-		const distance = framePosition.distanceTo(cameraPosition);
-		
+		// 设置显示和淡出的阈值
 		const showThreshold = 200;
 		const fadeThreshold = 300;
 		
-		// 根据距离决定显示状态和不透明度
-		if (distance < fadeThreshold) {
-			setShouldShow(true);
-			const opacity = distance > showThreshold 
-				? 1 - (distance - showThreshold) / (fadeThreshold - showThreshold)
+		// 根据z值差计算不透明度
+		if (zDistance < fadeThreshold) {
+			const opacity = zDistance > showThreshold 
+				? 1 - (zDistance - showThreshold) / (fadeThreshold - showThreshold)
 				: 1;
 			setImageOpacity(Math.max(0, Math.min(1, opacity)));
 		} else {
-			setShouldShow(false);
 			setImageOpacity(0);
 		}
 
