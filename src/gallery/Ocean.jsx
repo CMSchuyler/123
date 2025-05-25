@@ -23,7 +23,7 @@ function Ocean() {
 			waterNormals,
 			sunDirection: new THREE.Vector3(),
 			sunColor: 0xffffff,
-			waterColor: 0x001e0f,
+			waterColor: 0x261502,
 			distortionScale: 8.0, // 显著增加扭曲效果
 			fog: true,
 			format: gl.encoding,
