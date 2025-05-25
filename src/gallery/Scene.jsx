@@ -10,8 +10,7 @@ const Scene = ({ onFrameClick }) => {
       shadows
       camera={{
         fov: 75,
-        position: [0, 0, 0],
-        rotation: [-Math.PI * 0.5, 0, 0],
+        position: [0, 7, 1000],
       }}
     >
       <color attach="background" args={['#311A01']} />
