@@ -24,7 +24,7 @@ function Ocean() {
 			textureHeight: 64,
 			waterNormals,
 			sunDirection: new THREE.Vector3(),
-			sunColor: 0xffffff,
+			sunColor: 0x860E0A,
 			waterColor: 0x261502,
 			distortionScale: 8.0,
 			fog: true,
@@ -72,7 +72,7 @@ function Ocean() {
 			>
 				<planeGeometry args={[2000, 3000]} />
 				<meshBasicMaterial
-					color="#AB916E"
+					color="#CF9D47"
 					transparent
 					opacity={0.7}
 					side={THREE.DoubleSide}
