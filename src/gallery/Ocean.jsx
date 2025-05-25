@@ -13,58 +13,29 @@ function Ocean() {
 		'./textures/waternormals.jpeg'
 	);
 	waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping;
+	waterNormals.repeat.set(8, 8); // 增加法线贴图的重复次数，使水面更加扭曲
 
 	const geom = useMemo(() => new THREE.PlaneGeometry(2000, 3000), []);
 	const config = useMemo(
 		() => ({
-			textureWidth: 512,
-			textureHeight: 512,
+			textureWidth: 256, // 降低纹理分辨率
+			textureHeight: 256,
 			waterNormals,
 			sunDirection: new THREE.Vector3(),
 			sunColor: 0xffffff,
 			waterColor: 0x000c06,
-			distortionScale: 0.25,        // 增加波纹程度
+			distortionScale: 3.5, // 增加水面扭曲程度
 			fog: false,
 			format: gl.encoding,
-			alpha: 1,
-			mirror: 0.2,    // 设置镜面反射为0，禁用反射
+			alpha: 0.8, // 降低透明度
+			mirror: 0.6, // 降低反射强度
 		}),
 		[waterNormals]
 	);
 
-	const initRef = useRef(false);
 	useFrame((state, delta) => {
-		ref.current.material.uniforms.time.value += delta * 0.05;
-		
-		if (!initRef.current && ref.current) {
-			const uniforms = ref.current.material.uniforms;
-
-			// 在Shader中添加模糊处理
-			if (uniforms.mirrorSampler) {
-				// 完全禁用反射 - 设置反射强度为0
-				if (uniforms.reflectivity) {
-					uniforms.reflectivity.value = 0;  // 将反射率设为0，禁用反射
-					console.log('Water reflection disabled (reflectivity = 0)');
-				}
-				
-				// 禁用镜面采样器
-				if (uniforms.mirrorSampler.value) {
-					// 尝试禁用反射贴图的渲染
-					try {
-						uniforms.mirrorSampler.value.needsUpdate = false;
-					} catch (e) {
-						console.log('Could not disable mirror sampler update', e);
-					}
-				}
-				
-				// 如果有eye参数，也可以尝试禁用
-				if (uniforms.eye) {
-					uniforms.eye.value = new THREE.Vector3(0, 0, 0);
-				}
-			}
-
-			initRef.current = true;
-		}
+		// 增加水面动画速度
+		ref.current.material.uniforms.time.value += delta * 0.5;
 	});
 
 	return (
