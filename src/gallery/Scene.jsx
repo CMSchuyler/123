@@ -15,7 +15,7 @@ const Scene = () => {
 				rotation: [-Math.PI * 0.5, 0, 0],
 			}}
 		>
-			<color attach="background" args={['#A16A46']} />
+			<color attach="background" args={['#65442F']} />
 			<Gallery />
 			<Ocean />
 			<Fog />
