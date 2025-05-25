@@ -14,22 +14,21 @@ function Ocean() {
 		'./textures/waternormals.jpeg'
 	);
 	waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping;
-	waterNormals.repeat.set(4, 4); // 减少重复次数
+	waterNormals.repeat.set(4, 4);
 
-	// 减小几何体的细分数
 	const geom = useMemo(() => new THREE.PlaneGeometry(2000, 3000, 50, 50), []);
 	const config = useMemo(
 		() => ({
-			textureWidth: 64, // 降低纹理分辨率
+			textureWidth: 64,
 			textureHeight: 64,
 			waterNormals,
 			sunDirection: new THREE.Vector3(),
-			sunColor: 0xffffff,
-			waterColor: 0x261502,
+			sunColor: 0x000000, // 移除太阳光照
+			waterColor: 0x0A0705, // 更暗的水面颜色
 			distortionScale: 8.0,
 			fog: true,
 			format: gl.encoding,
-			alpha: 0.8,
+			alpha: 0.9,
 		}),
 		[waterNormals]
 	);
@@ -37,21 +36,16 @@ function Ocean() {
 	useFrame((state, delta) => {
 		const camera = state.camera;
 		const waterPosition = ref.current.position;
-		
-		// 计算相机到水面的距离
 		const distance = camera.position.distanceTo(waterPosition);
 		
-		// 根据距离动态调整更新频率
 		if (distance < 500) {
 			ref.current.material.uniforms.time.value += delta * 0.15;
-			
 			const time = state.clock.getElapsedTime();
 			waterNormals.offset.set(
 				Math.sin(time * 0.03) * 0.05,
 				Math.cos(time * 0.03) * 0.05
 			);
 		} else {
-			// 远处水面减少更新频率
 			ref.current.material.uniforms.time.value += delta * 0.05;
 		}
 	});
@@ -63,7 +57,7 @@ function Ocean() {
 				args={[geom, config]}
 				rotation-x={-Math.PI / 2}
 				position-y={0}
-				frustumCulled={true} // 启用视锥体剔除
+				frustumCulled={true}
 			/>
 			<mesh
 				ref={overlayRef}
@@ -72,14 +66,12 @@ function Ocean() {
 			>
 				<planeGeometry args={[2000, 3000]} />
 				<meshBasicMaterial
-					color="#AB916E"
+					color="#1A0F0A"
 					transparent
-					opacity={0.7}
+					opacity={0.8}
 					side={THREE.DoubleSide}
 				/>
 			</mesh>
 		</group>
 	);
 }
-
-export default Ocean;

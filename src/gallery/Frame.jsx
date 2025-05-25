@@ -31,7 +31,7 @@ const Frame = ({
 		);
 		easing.dampC(
 			frame.current.material.color,
-			hovered ? '#4B0401' : '#FAE3CA',
+			hovered ? '#4B0401' : '#2A1810',
 			0.1,
 			delta
 		);
@@ -53,9 +53,9 @@ const Frame = ({
 				<boxGeometry />
 				<meshStandardMaterial
 					color="#151515"
-					metalness={0.5}
-					roughness={0.5}
-					envMapIntensity={2}
+					metalness={0.3}  // 降低金属度
+					roughness={0.7}  // 增加粗糙度，减少反射
+					envMapIntensity={0.5}  // 降低环境贴图强度
 				/>
 				<mesh
 					ref={frame}
