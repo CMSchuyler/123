@@ -1,9 +1,7 @@
-import React from 'react';
-import { easing } from 'maath';
-import * as THREE from 'three';
-import { useRef, useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useFrame } from '@react-three/fiber';
 import { useProgress } from '@react-three/drei';
-import Frame from './Frame';
+import Frames from './Frames';
 
 const images = [
 	// Left column - Right tilt (z-axis staggered) - First 22
@@ -348,7 +346,6 @@ const Gallery = () => {
 				
 				state.camera.position.y = 7;
 				
-				// 相机跟随鼠标移动
 				if (animationRef.current.complete) {
 					const rotationSpeed = 0.1;
 					state.camera.rotation.y = mousePosition.x * rotationSpeed;
