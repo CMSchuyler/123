@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { easing } from 'maath';
 import getUuid from 'uuid-by-string';
 import { useCursor, Image, Text } from '@react-three/drei';
-import { useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
+import * as THREE from 'three';
 
 const Frame = ({
 	url,
@@ -22,33 +22,28 @@ const Frame = ({
 	useCursor(hovered);
 
 	useFrame((state, delta) => {
-		// 计算相机到当前frame的距离
-		const distance = state.camera.position.distanceTo({
-			x: position[0],
-			y: position[1],
-			z: position[2]
-		});
-		const showThreshold = 200; // 显示阈值
-		const fadeThreshold = 300; // 渐变开始阈值
+		// 使用 THREE.Vector3 进行更精确的距离计算
+		const framePosition = new THREE.Vector3(position[0], position[1], position[2]);
+		const cameraPosition = new THREE.Vector3();
+		state.camera.getWorldPosition(cameraPosition);
 		
-		// 决定是否应该显示图片
+		const distance = framePosition.distanceTo(cameraPosition);
+		
+		const showThreshold = 200;
+		const fadeThreshold = 300;
+		
+		// 根据距离决定显示状态和不透明度
 		if (distance < fadeThreshold) {
 			setShouldShow(true);
-		} else {
-			setShouldShow(false);
-		}
-
-		// 计算不透明度
-		if (shouldShow) {
 			const opacity = distance > showThreshold 
 				? 1 - (distance - showThreshold) / (fadeThreshold - showThreshold)
 				: 1;
 			setImageOpacity(Math.max(0, Math.min(1, opacity)));
 		} else {
+			setShouldShow(false);
 			setImageOpacity(0);
 		}
 
-		// 基础缩放动画
 		image.current.material.zoom = 1.1;
 		easing.damp3(
 			image.current.scale,
