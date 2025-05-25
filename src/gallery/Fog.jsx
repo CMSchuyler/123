@@ -38,8 +38,8 @@ const Fog = () => {
 			const maxDistance = 800;
 			const fadeRange = maxDistance - minDistance;
 			
-			const minHeight = 200;
-			const maxHeight = 400;
+			const minHeight = 500;
+			const maxHeight = 1000;
 			const heightFactor = Math.max(0, Math.min(1, 
 				(cloudPosition.y - minHeight) / (maxHeight - minHeight)
 			));
